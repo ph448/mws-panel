@@ -30,7 +30,9 @@ def warning_messages(site):
 
     if production_service is not None:
         if production_service.due_update():
-            warning_messages_list.append("Your server is due for an OS update.")
+            warning_messages_list.append(
+                format_html('Your server is due for an <a href="%s" style="text-decoration: underline;">OS update</a>.' %
+                            reverse('sitesmanagement.views.clone_vm_view', kwargs={'site_id': site.id})))
         for domain_name in DomainName.objects.filter(vhost__service=production_service, status='requested'):
             warning_messages_list.append("Your domain name %s has been requested and is under review." %
                                          domain_name.name)
