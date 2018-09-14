@@ -21,12 +21,11 @@ class Command(BaseCommand):
         parser.add_argument('--file', '-f', action='store', help='filename to read')
         parser.add_argument('--output', '-o', action='store', help='filename to write')
 
-    def get_attr_or_none(self, vhost=None, attr=None):
-        '''retrieve an attribute from a Vhost or None if not found or empty'''
-        if vhost:
+    def get_attr_or_none(self, obj=None, attr=None):
+        '''retrieve an attribute from a Vhost or None if not found'''
+        if obj:
             try:
-                value = getattr(vhost, attr)
-                return value if value not in (None, '') else None
+                return getattr(obj, attr)
             except:
                 return None
 
