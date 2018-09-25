@@ -36,6 +36,7 @@ def vm_api_request(command, parameters, vm):
     api_command.append(vm.cluster.hosts.first().hostname)
     api_command.append(command)
     api_command.append("'%s'" % json.dumps(parameters))
+    LOGGER.info("Got VM API request: %s", api_command)
     try:
         response = subprocess.check_output(api_command, stderr=subprocess.STDOUT)
         LOGGER.info("VM API request: %s\nVM API response: %s", api_command, response)
