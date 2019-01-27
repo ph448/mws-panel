@@ -699,12 +699,15 @@ class DomainName(models.Model):
 
         for resolver in resolvers:
             try:
-                answer = resolver['RESOLVER'].query(hostname)
-                if any([answer.canonical_name.to_text()[:-1] == netname, # have to strip trailing dot
-                        ip4 in [A.to_text() for A in answer.rrset.items if A.rdtype == dns.rdatatype.A],
-                        ip6 in [AAAA.to_text() for AAAA in answer.rrset.items if AAAA.rdtype == dns.rdatatype.AAAA],]):
-                    if status not in ['external', 'special']:
-                        status = resolver['SCOPE']
+                if resolver['RESOLVER'].query(hostname).canonical_name.to_text()[:-1] == netname:
+                    # CNAME
+                    print('we have a CNAME')
+                elif ip4 in [A.to_text() for A in resolver['RESOLVER'].query(hostname, 'A').rrset.items if A.rdtype == dns.rdatatype.A]:
+                    # IPv4 address
+                    print('we have an A record')
+                elif ip6 in [AAAA.to_text() for AAAA in resolver['RESOLVER'].query(hostname, 'AAAA').rrset.items if AAAA.rdtype == dns.rdatatype.AAAA],]):
+                    # IPv6 address
+                    print('we have an AAAA record')
             except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.NoNameservers):
                 status = 'deleted'
         if update and self.status != status:
