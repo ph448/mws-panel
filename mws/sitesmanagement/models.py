@@ -631,12 +631,13 @@ class Vhost(models.Model):
             # all eligible names
             names = [dom.name for dom in vh.domain_names.exclude(status__in=['denied', 'requested'])]
         elif global_only:
-            # only names that are globally available
+            # only names that are globally available but not the service hostname
             names = [dom.name for dom in vh.domain_names.filter(status__in=['global', 'external', 'special']).exclude(
                      name=vh.service.network_configuration.name)]
         else:
-            # both private and global names
-            names = [dom.name for dom in vh.domain_names.filter(status__in=['accepted', 'private', 'global', 'external', 'special'])]
+            # both private and global names but not the service hostname
+            names = [dom.name for dom in vh.domain_names.filter(status__in=['accepted', 'private', 'global', 'external', 'special']).exclude(
+                     name=vh.service.network_configuration.name)]
         return names
 
 
